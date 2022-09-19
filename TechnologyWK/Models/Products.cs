@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace TechnologyWK.Models
 {
@@ -31,7 +32,7 @@ namespace TechnologyWK.Models
         [DataType(DataType.Currency)]
         public decimal? PriceSale { get; set; }
 
-
+        [IgnoreDataMember]
         [Column("Categoria")]
         [ForeignKey(nameof(IdCategory))]
         [InverseProperty(nameof(Categories.Products))]

@@ -7,32 +7,36 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TechnologyWK.Data;
 using TechnologyWK.Models;
+using TechnologyWK.Repositories;
 
 namespace TechnologyWK.Controllers
 {
     [Route("api/[controller]/[action]")]
     public class ProductsController : Controller
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Testando", "Teste"
-        };
+        #region Fields
+        private readonly IProductsRepository _productsRepository;
         private readonly Context _context;
+        #endregion
 
-        public ProductsController(Context context)
+        #region Construtor
+        public ProductsController(IProductsRepository productsRepository,Context context)
         {
+            _productsRepository = productsRepository;
             _context = context;
         }
+        #endregion
 
-        // GET: Products
+        #region CRUD WEB APP
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var ret = _context.Products.Include(e => e.CategoriaNavigation).AsNoTracking();
+            var  ret =  _context.Products.Include(e => e.CategoriaNavigation).AsNoTracking();
             return View(ret);      
         }
 
-        // GET: Products/Details/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
@@ -51,7 +55,7 @@ namespace TechnologyWK.Controllers
             return View(products);
         }
 
-        // GET: Products/Create
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public IActionResult Create()
         {
@@ -60,7 +64,7 @@ namespace TechnologyWK.Controllers
             return View();
         }
 
-        // POST: Products/Create  
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Description,Ncm,PriceCost,PriceSale,Categoria")] Products products)
@@ -72,7 +76,7 @@ namespace TechnologyWK.Controllers
             return View(products);
         }
 
-        // GET: Products/Edit/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -95,7 +99,7 @@ namespace TechnologyWK.Controllers
             return View(products);
         }
 
-        // POST: Products/Edit/5    
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Description,Ncm,PriceCost,PriceSale,Categoria")] Products products)
@@ -131,7 +135,7 @@ namespace TechnologyWK.Controllers
             return View(products);
         }
 
-        // GET: Products/Delete/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -150,7 +154,7 @@ namespace TechnologyWK.Controllers
             return View(products);
         }
 
-        // POST: Products/Delete/5
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -173,5 +177,51 @@ namespace TechnologyWK.Controllers
         {
             return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+        #endregion
+
+        #region CRUD SWAGGER API
+        [HttpGet]
+        public async Task<IEnumerable<Products>> GetProducts()
+        {
+            return await _productsRepository.Get();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Products>> GetAllProducts(int id)
+        {
+            return await _productsRepository.Get(id);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Products>> PostProducts([FromBody] Products products)
+        {
+            var newProduct = await _productsRepository.Create(products);
+            return products;
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteProducts(int id)
+        {
+            var deleteProducts = await _productsRepository.Get(id);
+
+            if (deleteProducts == null)
+                return NotFound();
+
+
+            await _productsRepository.Delete(deleteProducts.Id);
+            return NoContent();
+
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> PutProducts(int id, [FromBody] Products products)
+        {
+            if (id != products.Id)
+                return BadRequest();
+
+            await _productsRepository.Update(products);
+            return NoContent();
+        }
+        #endregion
     }
 }

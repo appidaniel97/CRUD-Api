@@ -34,10 +34,12 @@ namespace TechnologyWK
                 "server=us-cdbr-east-06.cleardb.net;userid=b4f8bc383f2367;password=a7fcfd2b;database=heroku_fc7f8e3520ecc4f;port=3306",
             Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.28-mysql")));
             services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            services.AddScoped<IProductsRepository, ProductsRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MVC Api - WK Technology", Version = "v1" });
+                c.EnableAnnotations();
             });
 
             services.AddMvc(options =>
