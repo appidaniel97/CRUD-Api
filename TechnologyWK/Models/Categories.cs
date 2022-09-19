@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace TechnologyWK.Models
 {
@@ -19,6 +20,7 @@ namespace TechnologyWK.Models
         [Display(Name = "Categoria")]
         public string NameCategory { get; set; }
 
+        [IgnoreDataMember]
         [InverseProperty("CategoriaNavigation")]
         public virtual ICollection<Products> Products { get; set; }
 

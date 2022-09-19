@@ -40,6 +40,7 @@ namespace TechnologyWK
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MVC Api - WK Technology", Version = "v1" });
                 c.EnableAnnotations();
+                c.SchemaFilter<SwaggerFilter>();
             });
 
             services.AddMvc(options =>

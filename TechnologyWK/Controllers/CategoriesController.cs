@@ -187,7 +187,7 @@ namespace TechnologyWK.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Categories>> PostCategories([Bind("Id,NameCategory")] Categories categories)
+        public async Task<ActionResult<Categories>> PostCategories([FromBody] Categories categories)
         {
             var newCategory = await _categoriesRepository.Create(categories);
             return categories;
